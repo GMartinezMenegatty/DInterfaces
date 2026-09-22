@@ -28,7 +28,7 @@ class FiestraPrincipal(QMainWindow):
 
         layout_col1 = QVBoxLayout()
         layout_col1.addWidget(CaixaCor("red"))
-        layout_col1.addWidget(CaixaCor("yellow"))
+        layout_col1.addWidget(CaixaCor("blue"))
         layout_col1.addWidget(CaixaCor("purple"))
 
         caixa_verde = CaixaCor("green")
