@@ -164,14 +164,6 @@ class FiestraPrincipal(QMainWindow):
 
 
 
-
-
-
-
-
-
-
-
     def restart(self):
 
         print("restart")
