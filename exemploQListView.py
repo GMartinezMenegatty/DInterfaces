@@ -1,9 +1,8 @@
 import math
 import sys
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtWidgets import (QMainWindow, QApplication, QWidget, QGridLayout, QPushButton, QTextEdit, QVBoxLayout,
-                             QApplication, QPushButton, QWidget, QLabel, QListView, QHBoxLayout)
+from PyQt6.QtWidgets import (QMainWindow, QApplication, QVBoxLayout, QPushButton, QWidget, QLabel, QLineEdit,
+                             QHBoxLayout, QListView)
 
 from ModeloListaTarefas import ModeloTarefas
 
@@ -12,49 +11,68 @@ class FiestraPrincipal(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Exemplo QGridLayout")
+        self.setWindowTitle("exemplo QListView")
 
-        self.setMinimumSize(400, 300)
+        self.setMinimumSize(400, 600)
         self.setMaximumSize(400, 400)
 
-        listaTarefas = [(True, "Ir o centro DC"), (False, "Ir o ximnasio"), (False, "Ir a compra")]
+        self.listaTarefas = [[True, "Ir o centro DC"], [False, "Ir o ximnasio"], [False, "Ir a compra"], [False, "Outra"]]
 
-        self.modelo = ModeloTarefas(listaTarefas)
+        self.modelo = ModeloTarefas(self.listaTarefas)
 
-        maia = QVBoxLayout()
+        caixaV = QVBoxLayout()
 
         self.lstTarefas = QListView()
         self.lstTarefas.setModel(self.modelo)
         self.lstTarefas.setSelectionMode(QListView.SelectionMode.MultiSelection)
-
-        maia.addWidget(self.lstTarefas)
-
+        caixaV.addWidget(self.lstTarefas)
 
         caixaBotons = QHBoxLayout()
-
         btnBorrar = QPushButton("Borrar")
         btnBorrar.clicked.connect(self.on_btnBorrar_clicked)
         btnFeito = QPushButton("Feito")
-        btnFeito.clicked.connect (self.on_btnFeito_clicked)
+        btnFeito.clicked.connect(self.on_btnFeito_clicked)
+
         caixaBotons.addWidget(btnBorrar)
         caixaBotons.addWidget(btnFeito)
 
-        maia.addLayout(caixaBotons)
+        caixaV.addLayout(caixaBotons)
+
+        self.txtTarefa = QLineEdit()
+        caixaV.addWidget(self.txtTarefa)
+        btnEngadir = QPushButton("Engadir Tarefa")
+        btnEngadir.clicked.connect(self.on_btnEngadir_clicked)
+        caixaBotons.addWidget(btnEngadir)
 
 
-        window = QWidget()
-        window.setLayout(maia)
-        self.setCentralWidget(window)
+        contenedor = QWidget()
+        contenedor.setLayout(caixaV)
+        self.setCentralWidget(contenedor)
 
         self.show()
 
     def on_btnBorrar_clicked(self):
-        pass
-
+        indices = self.lstTarefas.selectedIndexes()
+        if indices:
+            for indice in sorted (indices, reverse = True):
+                del (self.modelo.tarefas[indice.row()])
+            self.modelo.layoutChanged.emit()
 
     def on_btnFeito_clicked(self):
-        pass
+        indices = self.lstTarefas.selectedIndexes()
+        if indices:
+            for indice in indices:
+                self.modelo.tarefas[indice.row()][0] = True
+            self.modelo.layoutChanged.emit()
 
+
+    def on_btnEngadir_clicked(self):
+        txt = self.txtTarefa.text().strip()
+
+        if txt != "":
+            self.listaTarefas.append([False, self.txtTarefa.text()])
+            self.txtTarefa.clear()
+            self.modelo.layoutChanged.emit()
 
 
 if __name__ == '__main__':
