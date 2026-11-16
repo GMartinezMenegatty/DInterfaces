@@ -17,6 +17,7 @@ class ModeloTarefas (QAbstractListModel):
             estado, _ = self.tarefas [indice.row()]
             if estado:
                 return tick
+            '''
         if rol == Qt.ItemDataRole.BackgroundRole:
             estado, _ = self.tarefas [indice.row()]
             if not estado:
@@ -25,15 +26,28 @@ class ModeloTarefas (QAbstractListModel):
             estado, _ = self.tarefas [indice.row()]
             if not estado:
                 return QColor("Blue")
+                '''
         if rol == Qt.ItemDataRole.CheckStateRole:
             estado, _ = self.tarefas [indice.row()]
-            if not estado:
-                return Qt.CheckState(True)
+            return Qt.CheckState(estado)
 
+    def setData(self, indice, valor, rol):
+        if rol == Qt.ItemDataRole.CheckStateRole:
+            self.tarefas[indice.row()] [0] = valor
+            self.layoutChanged.emit ()
+            return True
+        if rol == Qt.ItemDataRole.EditRole:
+            self.tarefas[indice.row()][1] = valor
+            self.layoutChanged.emit()
+            return True
+        return False
 
 
     def rowCount(self, indice):
         return len (self.tarefas)
+
+    def flags (self, indice):
+        return Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled | Qt.ItemFlag.ItemIsSelectable | Qt.ItemFlag.ItemIsEditable
 
 
 
